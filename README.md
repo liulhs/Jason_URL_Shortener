@@ -1,8 +1,8 @@
 # Jason's URL Shortener
 
-![UI Image](./imgs/UI.png)  
-[Live Demo](https://www.jasonurl.com/):  
-https://www.jasonurl.com/
+[![UI Image](./imgs/UI.png)](https://www.jasonurl.com/) 
+**[Live Demo](https://www.jasonurl.com/):**
+***https://www.jasonurl.com/***
 
 Jason's URL Shortener API is a scalable, high-performance application for generating and managing shortened URLs with expiration capabilities. Built with FastAPI and Uvicorn, the project ensures reliability, speed, and ease of scaling, making it suitable for both personal and commercial use.
 
