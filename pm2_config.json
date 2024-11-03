@@ -1,0 +1,14 @@
+{
+    "apps": [
+    {
+        "name": "url_shortener_api",
+        "script": "uvicorn",
+        "args": "short_url:app --host 0.0.0.0 --port 8000 --workers 4 --log-level info",
+        "interpreter": "python3",
+        "autorestart": true,
+        "watch": false,
+        "max_memory_restart": "2G"
+      }
+    ]
+  }
+  

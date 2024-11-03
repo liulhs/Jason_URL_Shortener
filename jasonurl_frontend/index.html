@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Jason's URL Shortener</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+		<header id="header">
+			<h1>Jason's URL Shortener</h1>
+			<p>Enter a long URL and set an optional expiration time in minutes.</p>
+		</header>
+
+		<!-- URL Shortener Form -->
+		<form id="signup-form">
+			<input type="text" name="long_url" id="long_url" placeholder="Enter Long URL" required />
+			<input type="text" name="expiration_minutes" id="expiration_minutes" placeholder="Expiration in Minutes (Optional)" min="1" />
+			<input type="submit" value="Get Short URL" />
+		</form>
+
+		<!-- Display Shortened URL and Expiration -->
+		<div id="result" style="display:none;">
+			<p>Your shortened URL:</p>
+			<p id="short_url"></p>
+			<p id="expiration_info"></p>
+		</div>
+
+		<!-- Footer -->
+		<footer id="footer">
+			<ul class="icons">
+				<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+				<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+				<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+				<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+			</ul>
+			<ul class="copyright">
+				<li>&copy; Jason's URL Shortener</li>
+			</ul>
+		</footer>
+
+		<!-- Scripts -->
+		<script src="assets/js/main.js"></script>
+		<script>
+			// Function to validate URL format
+			function isValidUrl(url) {
+				const urlPattern = new RegExp(
+					"^(https?:\\/\\/)?" + // Protocol (optional)
+					"((([a-zA-Z0-9\\-]+\\.)+[a-zA-Z]{2,})|" + // Domain name
+					"((\\d{1,3}\\.){3}\\d{1,3}))" + // OR IPv4 address
+					"(\\:\\d+)?(\\/[-a-zA-Z0-9@:%._\\+~#=]*)*" + // Port and path (optional)
+					"(\\?[;&a-zA-Z0-9@:%_\\+.~#?&//=]*)?" + // Query string (optional)
+					"(\\#[-a-zA-Z0-9@:%_\\+.~#?&//=]*)?$", // Fragment identifier (optional)
+					"i"
+				);
+				return urlPattern.test(url);
+			}
+
+			// Handle form submission
+			document.getElementById('signup-form').addEventListener('submit', async function(event) {
+				event.preventDefault();
+
+				const longUrl = document.getElementById('long_url').value;
+				const expirationInput = document.getElementById('expiration_minutes').value;
+				const expirationMinutes = expirationInput ? parseInt(expirationInput) : 1440; // Default to 1 day if not provided
+				const resultDiv = document.getElementById('result');
+				const shortUrlDisplay = document.getElementById('short_url');
+				const expirationInfoDisplay = document.getElementById('expiration_info');
+
+				// Validate URL format
+				if (!isValidUrl(longUrl)) {
+					alert("Please enter a valid URL.");
+					return;
+				}
+
+				try {
+					// Send POST request to API
+					const response = await fetch('https://www.jasonurl.com/url/shorten', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({ long_url: longUrl, expiration_minutes: expirationMinutes })
+					});
+
+					// Handle API response
+					if (response.ok) {
+						const data = await response.json();
+						shortUrlDisplay.innerHTML = `<a href="${data.short_url}" target="_blank">${data.short_url}</a>`;
+						
+						// Calculate and display expiration date and time
+						const expirationDate = new Date();
+						expirationDate.setMinutes(expirationDate.getMinutes() + expirationMinutes);
+						const expirationDateString = expirationDate.toLocaleString();
+						expirationInfoDisplay.innerHTML = `Expires on: ${expirationDateString}`;
+						
+						resultDiv.style.display = 'block';
+					} else {
+						alert('Failed to shorten the URL. Please try again.');
+					}
+				} catch (error) {
+					alert('Error: ' + error.message);
+				}
+			});
+		</script>
+	</body>
+</html>
